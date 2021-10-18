@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class UserCollection extends ResourceCollection
+class TaskCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -16,8 +16,8 @@ class UserCollection extends ResourceCollection
     {
         return [
             'success' => true,
-            'message' => 'get all data user',
-            'data' => $this->collection
+            'message' => 'get all data task',
+            'data' => $this->collection,
         ];
     }
 }

@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\{
 };
 use App\Http\Controllers\MeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TaskController;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,4 +32,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('profile/update', [ProfileController::class, 'update']);
     Route::post('profile/change-password', [ProfileController::class, 'changePassword']);
     Route::delete('profile/delete', [ProfileController::class, 'destroy']);
+
+    Route::group(['prefix' => 'tasks'], function () {
+        Route::get('/', [TaskController::class, 'get']);
+        Route::post('/', [TaskController::class, 'store']);
+        Route::patch('/{task:id}', [TaskController::class, 'update']);
+        Route::delete('/{task:id}', [TaskController::class, 'destroy']);
+        Route::get('/{id}/{code?}', [TaskController::class, 'show']);
+        Route::post('/{task:code}/user/{user:id}', [TaskController::class, 'addMember']);
+        // Route::get('/invite/{code}', [TaskController::class, 'getTaskByCode']);
+    });
 });
