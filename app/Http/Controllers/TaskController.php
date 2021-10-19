@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Gate;
 
 class TaskController extends Controller
 {
-    public function get()
+    public function index()
     {
         $tasks = Task::with('author')
             ->whereHas('members', function ($q) {
@@ -121,7 +121,13 @@ class TaskController extends Controller
         ], 200);
     }
     //destroy
-    public function destroy(Task $task)
+    /**
+     * destroy task
+     * @param Task $task
+     * 
+     * @return JsonResponse
+     */
+    public function destroy(Task $task): JsonResponse
     {
         $user = auth()->user();
 
@@ -132,10 +138,16 @@ class TaskController extends Controller
                 'message' => 'user not allowed'
             ], 403);
         }
-
+        //detach member
         $task->members()->detach();
-        $task->delete();
 
+        //delete related subtasks and detach member
+        foreach ($task->subtasks()->get() as $subtask) {
+            $subtask->members()->detach();
+            $subtask->delete();
+        }
+        //delete task
+        $task->delete();
 
         return response()->json([
             'success' => true,
@@ -144,6 +156,12 @@ class TaskController extends Controller
     }
 
     //invite user/ add member
+    /**
+     * @param mixed $code
+     * @param mixed $user
+     * 
+     * @return mixed
+     */
     public function addMember($code, $user)
     {
         $user = User::whereId($user)->first();
@@ -175,5 +193,51 @@ class TaskController extends Controller
             'success' => true,
             'message' => 'user succesfully added to task'
         ], 200);
+    }
+
+    /**
+     * leave task
+     * @param Task $task
+     * 
+     * @return JsonResponse
+     */
+    public function leaveTask(Task $task): JsonResponse
+    {
+        $user = auth()->user();
+        $exists = $task->members()->where('user_id', $user->id)->exists();
+        //is auth user == author
+        if ($task->author_id == $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => "user is the author, can't leave task"
+            ], 422);
+        }
+
+        //check user terdaftar di task
+        if (!$exists) {
+            return response()->json([
+                'success' => false,
+                'message' => 'user not allowed'
+            ], 403);
+        }
+
+        //leave task
+        $task->members()->detach($user->id);
+
+        $subtasks = $task->subtasks()->get();
+        foreach ($subtasks as $sub) {
+            if ($sub->members()->where('user_id', $user->id)->exists()) {
+                $sub->members()->detach($user->id);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'user successfully leave from task and subtask'
+        ]);
+
+        //if user has created sub task on it ? delete all subtask ?
+        //  iyo , leave dari member
+        //  ora, masih jadi member di subtask meski sudah leave task
     }
 }

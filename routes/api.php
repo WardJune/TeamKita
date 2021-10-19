@@ -35,8 +35,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('profile/delete', [ProfileController::class, 'destroy']);
 
     Route::group(['prefix' => 'tasks'], function () {
-        Route::get('/', [TaskController::class, 'get']);
+        Route::get('/', [TaskController::class, 'index']);
         Route::post('/', [TaskController::class, 'store']);
+        Route::post('/{task:id}/leave', [TaskController::class, 'leaveTask']);
         Route::patch('/{task:id}', [TaskController::class, 'update']);
         Route::delete('/{task:id}', [TaskController::class, 'destroy']);
         Route::get('/{id}/{code?}', [TaskController::class, 'show']);
