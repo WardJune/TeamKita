@@ -29,5 +29,8 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('task', function ($user, $task) {
             return $task->author_id == $user->id;
         });
+        Gate::define('subtask', function ($user, $subTask) {
+            return $subTask->author_id == $user->id;
+        });
     }
 }

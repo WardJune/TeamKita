@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\{
 };
 use App\Http\Controllers\MeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SubTaskController;
 use App\Http\Controllers\TaskController;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -41,5 +42,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/{id}/{code?}', [TaskController::class, 'show']);
         Route::post('/{task:code}/user/{user:id}', [TaskController::class, 'addMember']);
         // Route::get('/invite/{code}', [TaskController::class, 'getTaskByCode']);
+    });
+
+    Route::group(['prefix' => 'subtask'], function () {
+        Route::post('/', [SubTaskController::class, 'store']);
+        Route::post('/{subTask:id}/leave', [SubTaskController::class, 'leaveSubtask']);
+        Route::patch('/{subTask:id}', [SubTaskController::class, 'update']);
+        Route::get('/task/{id}', [SubTaskController::class, 'index']);
+        Route::patch('/{subTask:id}/status', [SubTaskController::class, 'updateStatus']);
+        Route::delete('/{subTask:id}', [SubTaskController::class, 'destroy']);
+        Route::get('/{id}', [SubTaskController::class, 'show']);
     });
 });
