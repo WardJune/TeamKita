@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class TaskSeeder extends Seeder
@@ -14,24 +15,13 @@ class TaskSeeder extends Seeder
      */
     public function run()
     {
-        $data = [
-            [
-                'title' => 'First Task',
-                'slug' => 'first-task',
-                'code' => \Str::random(6)
-            ],
-            [
-                'title' => 'Second Task',
-                'slug' => 'second-task',
-                'code' => \Str::random(6)
-            ],
-            [
-                'title' => 'Third Task',
-                'slug' => 'third-task',
-                'code' => \Str::random(6)
-            ],
-        ];
+        $tasks = Task::factory(5)->create();
 
-        Task::insert($data);
+        foreach ($tasks as $task) {
+            $users = User::get()->random(10)->pluck('id');
+            $users[] = $task->author_id;
+
+            $task->members()->attach($users);
+        }
     }
 }

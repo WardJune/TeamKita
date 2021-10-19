@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TaskFactory extends Factory
@@ -22,7 +23,10 @@ class TaskFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->title();
+            'title' => $this->faker->sentence(3),
+            'author_id' => User::get()->random(1)->pluck('id')->first(),
+            'slug' => \Str::slug($this->faker->sentence(3)),
+            'code' => \Str::random(6),
         ];
     }
 }
