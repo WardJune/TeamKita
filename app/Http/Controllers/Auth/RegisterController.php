@@ -26,6 +26,7 @@ class RegisterController extends Controller
             $user = User::create([
                 'name' => $validate['name'],
                 'username' => $validate['username'],
+                'avatar' => 'user/avatar/default.png',
                 'email' => $validate['email'],
                 'password' => Hash::make($validate['password'])
             ]);

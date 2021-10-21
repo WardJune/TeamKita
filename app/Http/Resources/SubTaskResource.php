@@ -28,6 +28,7 @@ class SubTaskResource extends JsonResource
                 'name' => $this->author->name,
                 'username' => $this->author->username,
             ],
+            'comments' => $this->whenAppended('comments', $this->comments_count),
             'member_count' => $this->members_count,
             'members' => UserResource::collection($this->whenLoaded('members'))
         ];

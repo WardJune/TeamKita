@@ -21,9 +21,20 @@ class SubTaskController extends Controller
      */
     public function index($id)
     {
+        $exists = Task::whereId($id)->first()
+            ->members()
+            ->where('user_id', auth()->user()->id)
+            ->exists();
+
+        if (!$exists) {
+            return response()->json([
+                'success' => false,
+                'message' => 'user not allowed'
+            ], 403);
+        }
 
         $subTasks = SubTask::with('author', 'members')
-            ->withCount('members')
+            ->withCount(['members', 'comments'])
             ->whereTaskId($id)
             ->whereHas('members', function ($q) {
                 $q->whereId(auth()->user()->id);
@@ -31,7 +42,7 @@ class SubTaskController extends Controller
             ->latest()
             ->get();
 
-        return new SubTaskCollection($subTasks);
+        return new SubTaskCollection($subTasks->append('comments'));
     }
 
     /**
