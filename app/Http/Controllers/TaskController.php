@@ -37,8 +37,11 @@ class TaskController extends Controller
             $task = Task::with('author')->withCount('members')->whereCode($id)->first();
             $append = 'count';
         } else {
-            $task = Task::with(['author', 'members'])->whereId($id)->first();
-            $append = 'members';
+            $task = Task::with(['author', 'members'])
+                ->withCount('members')
+                ->whereId($id)
+                ->first();
+            $append = ['members', 'count'];
         }
 
         if (!$task) {
@@ -174,7 +177,6 @@ class TaskController extends Controller
                 'message' => 'task / user not found'
             ], 404);
         }
-
 
         $exists = $task->members()->where('user_id', $user->id)->exists();
 

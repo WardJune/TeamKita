@@ -20,9 +20,9 @@ class SubTaskResource extends JsonResource
             'title' => $this->title,
             'slug' => $this->slug,
             'status' => $this->status,
-            'date_start' => $this->date_start->format('d-m-y H:i:s'),
-            'date_end' => $this->date_end->format('d-m-y H:i:s'),
-            'created_at' => $this->created_at->format('d-m-y H:i:s'),
+            'date_start' => $this->date_start->format('d-m-Y H:i:s'),
+            'date_end' => $this->date_end->format('d-m-Y H:i:s'),
+            'created_at' => $this->created_at->format('d-m-Y H:i:s'),
             'author' => [
                 'id' => $this->author->id,
                 'name' => $this->author->name,

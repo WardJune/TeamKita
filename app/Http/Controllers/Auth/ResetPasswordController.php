@@ -30,7 +30,7 @@ class ResetPasswordController extends Controller
         $user->notify(new ResetPasswordNotification($token));
 
         return response()->json([
-            'sucess' => true,
+            'success' => true,
             'message' => 'check user email, for reset password'
         ], 200);
     }

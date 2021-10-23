@@ -175,6 +175,16 @@ class SubTaskController extends Controller
      */
     public function updateStatus(SubTask $subTask): JsonResponse
     {
+        $user = auth()->user();
+
+        //if authorize
+        if (!Gate::forUser($user)->allows('subtask', $subTask)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'user not allowed'
+            ], 403);
+        }
+
         $subTask->update([
             'status' => true
         ]);
@@ -255,5 +265,5 @@ class SubTaskController extends Controller
 // -edit sub task with sync member on it
 // -delete sub task and member
 
-request leave task/ subtask
+// request leave task/ subtask
 */

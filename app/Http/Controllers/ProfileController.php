@@ -74,7 +74,7 @@ class ProfileController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'The given data was invalid',
-                'error' => [
+                'errors' => [
                     'current_password' => ["current password doesn't match our record"]
                 ]
             ], 422);
@@ -83,8 +83,11 @@ class ProfileController extends Controller
         if ($validate['current_password'] === $validate['password']) {
             return response()->json([
                 'success' => false,
-                'message' => 'password cannot be the same as current password'
-            ]);
+                'message' => 'The given data was invalid',
+                'errors' => [
+                    'password' => ['password cannot be the same as current password',]
+                ]
+            ], 422);
         }
 
         auth()->user()->update(['password' => Hash::make($validate['password'])]);
@@ -109,13 +112,16 @@ class ProfileController extends Controller
 
         if ($validate['email'] != $user->email) {
             return response()->json([
-                'success' => 'false',
-                'message' => 'Invalid email'
+                'success' => false,
+                'message' => 'The given data was invalid',
+                'errors' => [
+                    'email' => ['The selected email is invalid.']
+                ]
             ], 422);
         }
 
         try {
-            if ($user->avatar != 'user/avatar/default.jpg' && $user->avatar != null) {
+            if ($user->avatar != 'user/avatar/default.png' && $user->avatar != null) {
                 Storage::delete($user->avatar);
             }
             $user->tokens()->delete();

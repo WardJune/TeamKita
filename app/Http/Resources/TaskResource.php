@@ -19,14 +19,14 @@ class TaskResource extends JsonResource
             'title' => $this->title,
             'slug' => $this->slug,
             'code' => $this->code,
-            'created_at' => $this->created_at->format('d-m-y h:i:s'),
+            'created_at' => $this->created_at->format('d-m-Y h:i:s'),
             'author' => [
                 'id' => $this->author->id,
                 'name' => $this->author->name,
                 'username' => $this->author->username,
             ],
-            'member' => $this->whenAppended('members', UserResource::collection($this->whenLoaded('members'))),
             'members_count' => $this->whenAppended('count', $this->members_count),
+            'member' => $this->whenAppended('members', UserResource::collection($this->whenLoaded('members'))),
 
         ];
     }
