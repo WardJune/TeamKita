@@ -25,4 +25,9 @@ class Task extends Model
     {
         return $this->hasMany(SubTask::class);
     }
+
+    public function messages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
 }

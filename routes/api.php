@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\{
     ResetPasswordController,
 };
 use App\Http\Controllers\{
+    ChatMessageController,
     CommentController,
     MeController,
     ProfileController,
@@ -58,5 +59,10 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
         Route::post('/comments', [CommentController::class, 'store']);
         Route::get('/{id}/comments', [CommentController::class, 'index']);
+    });
+
+    Route::group(['prefix' => 'messages'], function () {
+        Route::get('/{taskId}', [ChatMessageController::class, 'messages']);
+        Route::post('/', [ChatMessageController::class, 'sendMessage']);
     });
 });
