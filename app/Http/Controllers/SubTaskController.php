@@ -7,6 +7,7 @@ use App\Http\Resources\SubTaskCollection;
 use App\Http\Resources\SubTaskResource;
 use App\Models\SubTask;
 use App\Models\Task;
+use App\Notifications\SubTaskNotifiation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
@@ -107,6 +108,10 @@ class SubTaskController extends Controller
             'date_end' => $validate['date_end']
         ]);
         $subTask->members()->attach($member_id);
+        //! notify member
+        foreach ($subTask->members as $member) {
+            $member->notify(new SubTaskNotifiation($subTask, $member, "You have been added to subtask '$subTask->title' "));
+        }
 
         return response()->json([
             'success' => true,
@@ -157,6 +162,8 @@ class SubTaskController extends Controller
             'date_start' => $validate['date_start'],
             'date_end' => $validate['date_end'],
         ]);
+
+        //! notify member
 
         $subTask->members()->sync($member_id);
 
@@ -211,6 +218,10 @@ class SubTaskController extends Controller
                 'message' => 'user not allowed'
             ], 403);
         }
+        //! notify member
+        foreach ($subTask->members as $member) {
+            $member->notify(new SubTaskNotifiation($subTask, $member, "You have been added to subtask '$subTask->title' "));
+        }
 
         $subTask->members()->detach();
         $subTask->delete();
@@ -258,7 +269,6 @@ class SubTaskController extends Controller
 }
 
 /* 
-
 // -get sub task based on task id and auth user
 // -show spesific task with member
 // -create sub task with attach member on it

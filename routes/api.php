@@ -38,6 +38,10 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::delete('profile/delete', [ProfileController::class, 'destroy']);
 
     Route::group(['prefix' => 'tasks'], function () {
+        // messages
+        Route::get('/{taskId}/messages', [ChatMessageController::class, 'messages']);
+        Route::post('/messages', [ChatMessageController::class, 'sendMessage']);
+
         Route::get('/', [TaskController::class, 'index']);
         Route::post('/', [TaskController::class, 'store']);
         Route::post('/{task:id}/leave', [TaskController::class, 'leaveTask']);
@@ -61,8 +65,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::get('/{id}/comments', [CommentController::class, 'index']);
     });
 
-    Route::group(['prefix' => 'messages'], function () {
-        Route::get('/{taskId}', [ChatMessageController::class, 'messages']);
-        Route::post('/', [ChatMessageController::class, 'sendMessage']);
-    });
+    // Route::group(['prefix' => 'messages'], function () {
+    //     Route::get('/{taskId}', [ChatMessageController::class, 'messages']);
+    // });
 });

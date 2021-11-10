@@ -2,8 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\ChatMessage;
-use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent implements ShouldBroadcast
+class TaskEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -22,9 +20,9 @@ class MessageSent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(ChatMessage $chatMessage)
+    public function __construct($message)
     {
-        $this->message = $chatMessage;
+        $this->message = $message;
     }
 
     /**
@@ -34,11 +32,11 @@ class MessageSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('chat.' . $this->message->task_id);
+        return new Channel('notification');
     }
 
     public function broadcastAs()
     {
-        return 'message';
+        return 'notify';
     }
 }

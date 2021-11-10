@@ -7,6 +7,7 @@ use App\Http\Resources\TaskCollection;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Models\User;
+use App\Notifications\TaskNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -118,6 +119,11 @@ class TaskController extends Controller
             'slug' => \Str::slug($validate['title'])
         ]);
 
+        //! notify user if task updated
+        foreach ($task->members as $member) {
+            $member->notify(new TaskNotification($task, $member, "$task->title has been updated"));
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'task succesfully updated'
@@ -141,6 +147,10 @@ class TaskController extends Controller
                 'message' => 'user not allowed'
             ], 403);
         }
+        //! notify members
+        foreach ($task->members as $member) {
+            $member->notify(new TaskNotification($task, $member, "$task->title has been deleted"));
+        }
         //detach member
         $task->members()->detach();
 
@@ -151,6 +161,7 @@ class TaskController extends Controller
         }
         //delete task
         $task->delete();
+
 
         return response()->json([
             'success' => true,
@@ -190,6 +201,9 @@ class TaskController extends Controller
 
         //attach user to task
         $task->members()->attach($user);
+
+        //! notify this user 
+        $user->notify(new TaskNotification($task, $user, "You have been added to $task->title"));
 
         return response()->json([
             'success' => true,
@@ -236,7 +250,7 @@ class TaskController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'user successfully leave from task and subtask'
-        ]);
+        ], 200);
 
         //if user has created sub task on it ? delete all subtask ?
         //  iyo , leave dari member
