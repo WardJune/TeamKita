@@ -19,8 +19,11 @@ use App\Http\Controllers\{
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// Route::middleware('auth:sanctum', 'verified')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 Route::middleware('auth:sanctum', 'verified')->get('/user', function (Request $request) {
-    return $request->user();
+    return auth()->user()->tokens()->get();
 });
 
 Route::post('register', RegisterController::class);

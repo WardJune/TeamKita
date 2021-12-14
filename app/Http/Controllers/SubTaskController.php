@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SubTask\SubTaskCreateRequest;
 use App\Http\Resources\SubTaskCollection;
 use App\Http\Resources\SubTaskResource;
+use App\Jobs\SubtaskNotifJob;
 use App\Models\SubTask;
 use App\Models\Task;
 use App\Notifications\SubTaskNotifiation;
@@ -108,10 +109,9 @@ class SubTaskController extends Controller
             'date_end' => $validate['date_end']
         ]);
         $subTask->members()->attach($member_id);
+
         //! notify member
-        foreach ($subTask->members as $member) {
-            $member->notify(new SubTaskNotifiation($subTask, $member, "You have been added to subtask '$subTask->title' "));
-        }
+        SubtaskNotifJob::dispatch($subTask, "You have been added to subtask '$subTask->title'");
 
         return response()->json([
             'success' => true,
@@ -219,9 +219,7 @@ class SubTaskController extends Controller
             ], 403);
         }
         //! notify member
-        foreach ($subTask->members as $member) {
-            $member->notify(new SubTaskNotifiation($subTask, $member, "You have been added to subtask '$subTask->title' "));
-        }
+        SubtaskNotifJob::dispatch($subTask, "subtask '$subTask->title' has been deleted");
 
         $subTask->members()->detach();
         $subTask->delete();

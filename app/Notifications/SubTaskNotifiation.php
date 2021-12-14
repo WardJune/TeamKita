@@ -36,9 +36,8 @@ class SubTaskNotifiation extends Notification
      */
     public function via($notifiable)
     {
-        return ['broadcast', 'database'];
+        return ['database', 'broadcast'];
     }
-
 
     /**
      * Get the array representation of the notification.

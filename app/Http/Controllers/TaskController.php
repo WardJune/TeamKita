@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Task\TaskCreateRequest;
 use App\Http\Resources\TaskCollection;
 use App\Http\Resources\TaskResource;
+use App\Jobs\NotifJob;
 use App\Models\Task;
 use App\Models\User;
 use App\Notifications\TaskNotification;
@@ -120,9 +121,7 @@ class TaskController extends Controller
         ]);
 
         //! notify user if task updated
-        foreach ($task->members as $member) {
-            $member->notify(new TaskNotification($task, $member, "$task->title has been updated"));
-        }
+        NotifJob::dispatch($task, "$task->title has been updated");
 
         return response()->json([
             'success' => true,
@@ -148,9 +147,8 @@ class TaskController extends Controller
             ], 403);
         }
         //! notify members
-        foreach ($task->members as $member) {
-            $member->notify(new TaskNotification($task, $member, "$task->title has been deleted"));
-        }
+        NotifJob::dispatch($task, "$task->title has been deleted");
+
         //detach member
         $task->members()->detach();
 

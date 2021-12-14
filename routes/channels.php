@@ -21,6 +21,10 @@ Broadcast::channel('task.message.{id}', function ($user) {
   return (int) $user->id === (int) auth()->user()->id;
 });
 
+Broadcast::channel('subtask.message.{id}', function ($user) {
+  return (int) $user->id === (int) auth()->user()->id;
+});
+
 Broadcast::channel('chat.{roomId}', function ($user) {
   return (int) $user->id === (int) auth()->user()->id;
 });
