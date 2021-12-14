@@ -19,10 +19,7 @@ use App\Http\Controllers\{
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Route::middleware('auth:sanctum', 'verified')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-Route::middleware('auth:sanctum', 'verified')->get('/user', function (Request $request) {
+Route::middleware('auth:api', 'verified')->get('/user', function (Request $request) {
     return auth()->user()->tokens()->get();
 });
 
@@ -31,7 +28,7 @@ Route::post('login', LoginController::class);
 Route::post('reset-password', ResetPasswordController::class);
 Route::post('new-password', NewPasswordController::class);
 
-Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
+Route::group(['middleware' => ['auth:api', 'verified']], function () {
     Route::get('me', [MeController::class, 'showMe']);
     Route::post('email-verify', EmailVerificationNotificationController::class)->withoutMiddleware('verified');
     Route::post('logout', LogoutController::class);
