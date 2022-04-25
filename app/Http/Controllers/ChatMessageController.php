@@ -21,6 +21,7 @@ class ChatMessageController extends Controller
         return (new MessageCollection($messages));
     }
 
+    //this is new
     public function sendMessage(Request $request)
     {
         $message = auth()
